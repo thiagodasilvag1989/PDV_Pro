@@ -9,5 +9,6 @@ namespace PDV_Pro.Domain.Models
         public string Descricao { get; set; }
         public string ValordeVenda { get; set; }
         public int Estoque { get; set; }
+        public List<Item> Items { get; set; }
     }
 }
