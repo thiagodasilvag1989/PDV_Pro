@@ -1,5 +1,6 @@
 ﻿using PDV_Pro.Domain.Interfaces.Servicos;
 using PDV_Pro.Domain.Models;
+using PDV_Pro.Domain.Validações;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,7 +20,18 @@ namespace PDV_Pro.Domain.Servicos
 
         public Task CriarAsync(Cliente cliente)
         {
+            var validacao = new ClienteValidacao();
+            var resut = validacao.Validate(cliente);
+
+            if (!resut.IsValid)
+            {
+                foreach (var erro in resut.Errors)
+                {
+
+                }
+            }
             throw new System.NotImplementedException();
+
         }
 
         public Task DeletarPorIdAsync(string clienteId)
