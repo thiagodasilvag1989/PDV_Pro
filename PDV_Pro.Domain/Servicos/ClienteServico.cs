@@ -1,6 +1,8 @@
-﻿using PDV_Pro.Domain.Interfaces.Servicos;
+﻿using PDV_Pro.Domain.Interfaces.Repositorios;
+using PDV_Pro.Domain.Interfaces.Servicos;
 using PDV_Pro.Domain.Models;
 using PDV_Pro.Domain.Validações;
+using PDV_Pro.Domain.Validações.Base;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,38 +10,44 @@ namespace PDV_Pro.Domain.Servicos
 {
     public class ClienteServico : IClienteService
     {
-        public Task AtualizarAsync(Cliente cliente)
+        private readonly IClienteRepositorio _clienteRepositorio;
+
+        public ClienteServico(IClienteRepositorio clienteRepositorio)
+        {
+            _clienteRepositorio = clienteRepositorio;
+        }
+
+        public Task<Response> AtualizarAsync(Cliente cliente)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<Cliente> BuscarPorIdAsync(string clienteId)
+        public Task<Response<Cliente>> BuscarPorIdAsync(string clienteId)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task CriarAsync(Cliente cliente)
+        async public Task<Response> CriarAsync(Cliente cliente)
         {
+            var response = new Response();
             var validacao = new ClienteValidacao();
-            var resut = validacao.Validate(cliente);
+            var erros = validacao.Validate(cliente).BuscarErros();
 
-            if (!resut.IsValid)
+            if (erros.Report.Count > 0)
             {
-                foreach (var erro in resut.Errors)
-                {
-
-                }
+                return erros;
             }
-            throw new System.NotImplementedException();
 
+            await _clienteRepositorio.CriarAsync(cliente);
+            return response;
         }
 
-        public Task DeletarPorIdAsync(string clienteId)
+        public Task<Response> DeletarPorIdAsync(string clienteId)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<List<Cliente>> ListaDeClientesAsync(string clienteId = null, string name = null)
+        public Task<Response<List<Cliente>>> ListaDeClientesAsync(string clienteId = null, string name = null)
         {
             throw new System.NotImplementedException();
         }

@@ -19,6 +19,11 @@ namespace PDV_Pro.Domain.Validações.Base
         {
             Report = reports;
         }
+
+        public static Response<T> OK<T>(T data) => new Response<T>(data);
+        public static Response OK() => new Response();
+        public static Response NaoProcessado(List<Report> reports) => new Response(reports);
+        public static Response NaoProcessado(Report reports) => new Response(reports);
     }
 
     public class Response<T> : Response
@@ -28,7 +33,7 @@ namespace PDV_Pro.Domain.Validações.Base
 
         }
 
-        public Response(T data, List<Report> reports) : base(reports)
+        public Response(T data, List<Report> reports = null) : base(reports)
         {
             Data = data;
         }
