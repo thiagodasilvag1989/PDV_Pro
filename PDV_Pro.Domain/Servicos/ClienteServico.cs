@@ -17,14 +17,39 @@ namespace PDV_Pro.Domain.Servicos
             _clienteRepositorio = clienteRepositorio;
         }
 
-        public Task<Response> AtualizarAsync(Cliente cliente)
+        async public Task<Response> AtualizarAsync(Cliente cliente)
         {
-            throw new System.NotImplementedException();
+            var response = new Response();
+            var validacao = new ClienteValidacao();
+            var erros = validacao.Validate(cliente).BuscarErros();
+
+            if (erros.Report.Count > 0)
+            {
+                return erros;
+            }
+
+            var existe = await _clienteRepositorio.ExistePorIdAsync(cliente.Id);
+            if (!existe)
+            {
+                response.Report.Add(Report.Criar($"Cliente {cliente.Id} não existe!"));
+                return response;
+            }
+            return response;
         }
 
-        public Task<Response<Cliente>> BuscarPorIdAsync(string clienteId)
+        async public Task<Response<Cliente>> BuscarPorIdAsync(string clienteId)
         {
-            throw new System.NotImplementedException();
+            var response = new Response<Cliente>();
+
+            var existe = await _clienteRepositorio.ExistePorIdAsync(clienteId);
+            if (!existe)
+            {
+                response.Report.Add(Report.Criar($"Cliente {clienteId} não existe!"));
+                return response;
+            }
+
+            response.Data = await _clienteRepositorio.BuscarPorIdAsync(clienteId);
+            return response;
         }
 
         async public Task<Response> CriarAsync(Cliente cliente)
@@ -42,14 +67,39 @@ namespace PDV_Pro.Domain.Servicos
             return response;
         }
 
-        public Task<Response> DeletarPorIdAsync(string clienteId)
+        async public Task<Response> DeletarPorIdAsync(string clienteId)
         {
-            throw new System.NotImplementedException();
+            var response = new Response();
+
+            var existe = await _clienteRepositorio.ExistePorIdAsync(clienteId);
+            if (!existe)
+            {
+                response.Report.Add(Report.Criar($"Cliente {clienteId} não existe!"));
+                return response;
+            }
+
+            await _clienteRepositorio.DeletarPorIdAsync(clienteId);
+            return response;
         }
 
-        public Task<Response<List<Cliente>>> ListaDeClientesAsync(string clienteId = null, string name = null)
+        async public Task<Response<List<Cliente>>> ListaDeClientesAsync(string clienteId = null, string name = null)
         {
-            throw new System.NotImplementedException();
+            var response = new Response<List<Cliente>>();
+
+            if (!string.IsNullOrWhiteSpace(clienteId))
+            {
+
+                var existe = await _clienteRepositorio.ExistePorIdAsync(clienteId);
+                if (!existe)
+                {
+                    response.Report.Add(Report.Criar($"Cliente {clienteId} não existe!"));
+                    return response;
+                }
+            }
+
+
+            response.Data = await _clienteRepositorio.ListaDeClientesAsync(clienteId, name);
+            return response;
         }
     }
 }
