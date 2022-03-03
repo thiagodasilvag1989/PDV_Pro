@@ -6,10 +6,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PDV_Pro.App.Mapper;
+using PDV_Pro.Infra.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace PDV_Pro
 {
@@ -25,6 +28,9 @@ namespace PDV_Pro
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDbContext>(_ => _.UseMySql(Configuration.GetConnectionString("AppDbContext"), builder =>
+            builder.MigrationsAssembly("PDV")));
+            services.AddAutoMapper(typeof(Core));
             services.AddControllers();
         }
 
